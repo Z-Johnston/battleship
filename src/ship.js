@@ -1,10 +1,12 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
 
 const Ship = (row, col, rotation, length) => {
   const getLength = () => length;
 
-  const getLocation = () => {
-    const location = [];
+  const location = [];
+
+  const setLocation = () => {
     if (rotation === 'vertical') {
       for (let i = 0; i < length; i++) {
         location.push([row - i, col]);
@@ -14,22 +16,20 @@ const Ship = (row, col, rotation, length) => {
         location.push([row, col + i]);
       }
     } else return 'select correct ship orientation';
-    return location;
   };
 
-  const getFront = () => getLocation()[0];
-  const getBack = () => getLocation()[getLocation().length - 1];
+  setLocation();
 
   const hits = [];
 
-  const hit = (index) => {
-    hits.push(index);
+  const hit = (loc) => {
+    hits.push(loc);
   };
 
   const isSunk = () => hits.length === length;
 
   return {
-    getLength, getLocation, getFront, getBack, hit, isSunk,
+    getLength, location, hit, isSunk,
   };
 };
 

@@ -3,6 +3,7 @@
 /* eslint-disable no-plusplus */
 
 import Player from './player';
+import Ship from './ship';
 import DOM from './dom';
 
 const Gameplay = () => {
@@ -24,22 +25,27 @@ const Gameplay = () => {
     const row = Math.floor(Math.random() * 10);
     const col = Math.floor(Math.random() * 10);
     const rotation = Math.random() >= 0.5 ? 'vertical' : 'horizontal';
-    computer.gameboard.placeShip(row, col, rotation, i);
+
+    const ship = Ship(row, col, rotation, i);
+
+    if (computer.gameboard.isPlacementValid(ship)) {
+      computer.gameboard.placeShip(ship);
+    } else i--;
   }
 
   // Have human player place 5 ships on board
-  for (let i = 2; i <= 6; i++) {
-    human.gameboard.placeShip(/* enter stuff here */);
-  }
+  //   for (let i = 2; i <= 6; i++) {
+  //     human.gameboard.placeShip(/* enter stuff here */);
+  //   }
 
   // Game loop of players taking shots until game is over
-  while (!gameOver()) {
-    human.takeShot(/* enter stuff here */);
-    computer.gameboard.recieveAttack(/* enter stuff here */);
+  //   while (!gameOver()) {
+  //     human.takeShot(/* enter stuff here */);
+  //     computer.gameboard.recieveAttack(/* enter stuff here */);
 
-    setTimeout(computer.takeShot(/* enter stuff here */), 4000);
-    human.gameboard.recieveAttack(/* enter stuff here */);
-  }
+//     setTimeout(computer.takeShot(/* enter stuff here */), 4000);
+//     human.gameboard.recieveAttack(/* enter stuff here */);
+//   }
 };
 
 export default Gameplay;

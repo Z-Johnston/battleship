@@ -1,3 +1,28 @@
 * {
     background-color: blue;
+    padding: 0rem;
+    justify-content: center;
 }
+
+.board {
+    display: grid;
+    grid-template: repeat(10, 2rem) / 20rem;
+    align-content: start;
+    margin: 3rem;
+}
+
+.dom-row {
+    display: grid;
+    grid-template: 2rem / repeat(10, 2rem);
+    align-content: start;
+}
+
+.water-loc {
+    background-color: grey;
+    border: solid .05rem black;
+}
+
+.ship-loc {
+    background-color: black;
+}
+

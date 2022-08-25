@@ -1,8 +1,6 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
 
-import Ship from './ship';
-
 // Create 10 x 10 gameboard with hasShip and isHit properties for each position
 const Gameboard = () => {
   const createBoard = () => {
@@ -23,23 +21,17 @@ const Gameboard = () => {
   /*   Checks if proposed ship placement is within gameboard extents
     and doesn't conflict with existing ships  */
   const isPlacementValid = (ship) => {
-    const highestPos = ship.location[0];
-    const lowestPos = ship.location[ship.location.length - 1];
-    if (Math.max(...highestPos) > 9 || Math.min(...lowestPos) < 0) {
+    const endPos = ship.location[ship.getLength() - 1];
+    if (Math.max(...endPos) > 9 || Math.min(...endPos) < 0) {
       return false;
     } if (ship.location.some((loc) => board[loc[0]][loc[1]].hasShip)) {
       return false;
     } return true;
   };
 
-  // Creates ship object, places on board, and pushes to fleet if placement is valid
-  // Function is called again if placement is not valid
-  const placeShip = (row, col, rotation, length) => {
-    const ship = Ship(row, col, rotation, length);
-
-    if (!isPlacementValid(ship)) placeShip(row, col, rotation, length);
-
-    for (let i = 0; i < ship.location.length; i++) {
+  // Place ship on board and adds to fleet
+  const placeShip = (ship) => {
+    for (let i = 0; i < ship.getLength(); i++) {
       const coord = ship.location[i];
       board[coord[0]][coord[1]].hasShip = true;
     }
@@ -60,7 +52,7 @@ const Gameboard = () => {
   };
 
   return {
-    board, placeShip, recieveAttack, fleet,
+    board, isPlacementValid, placeShip, recieveAttack, fleet,
   };
 };
 

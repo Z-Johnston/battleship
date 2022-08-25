@@ -6,6 +6,7 @@ const Ship = (row, col, rotation, length) => {
 
   const location = [];
 
+  // Sets ship location based on parameters
   const setLocation = () => {
     if (rotation === 'vertical') {
       for (let i = 0; i < length; i++) {

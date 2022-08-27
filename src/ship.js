@@ -27,10 +27,10 @@ const Ship = (row, col, rotation, length) => {
     hits.push(loc);
   };
 
-  const isSunk = () => hits.length === length;
+  const isSunk = () => hits.length === getLength();
 
   return {
-    getLength, location, hit, isSunk,
+    getLength, location, hit, isSunk, hits,
   };
 };
 

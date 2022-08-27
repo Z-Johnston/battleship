@@ -17,12 +17,21 @@
     align-content: start;
 }
 
-.water-loc {
-    background-color: grey;
+[data-stat="water"] {
+    background-color: rgb(255, 255, 255);
     border: solid .05rem black;
 }
 
-.ship-loc {
+[data-stat="ship"] {
     background-color: black;
 }
 
+[data-stat="hit-ship"] {
+    background-color: rgb(201, 21, 21);
+    border: solid .05rem black;
+}
+
+[data-stat="hit-water"] {
+    background-color: rgb(121, 116, 116);
+    border: solid .05rem black;
+}

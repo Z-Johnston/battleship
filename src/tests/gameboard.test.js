@@ -9,9 +9,10 @@ describe('gameboard', () => {
 
   beforeEach(() => {
     testBoard = Gameboard();
-    ship = Ship(5, 5, 'horizontal', 3);
+    ship = Ship(5, 5, 'horizontal', 2);
     testBoard.placeShip(ship);
     testBoard.recieveAttack([5, 5]);
+    testBoard.recieveAttack([5, 6]);
   });
 
   test('board length is accurate', () => {
@@ -26,7 +27,15 @@ describe('gameboard', () => {
     expect(testBoard.board[5][6].hasShip).toBeTruthy();
   });
 
-  test('recieve attack func', () => {
-    expect(testBoard.board[5][5].isHit).toBeTruthy();
+  test('recieve attack func 1', () => {
+    expect(testBoard.board[5][6].isHit).toBeTruthy();
+  });
+
+  test('recieve attack func 2', () => {
+    expect(testBoard.fleet[0].isSunk()).toBe(true);
+  });
+
+  test('gameover function', () => {
+    expect(testBoard.gameOver()).toBe(true);
   });
 });

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable arrow-body-style */
 /* eslint-disable no-undef */
 /* eslint-disable no-plusplus */
@@ -11,14 +12,6 @@ const Gameplay = () => {
 
   const human = Player('human');
   const computer = Player('computer');
-  dom.initBoard(human);
-  dom.initBoard(computer);
-
-  const gameOver = () => {
-    if (human.gameboard.fleet.forEach((ship) => ship.isSunk())) return 'computer';
-    if (computer.gameboard.fleet.forEach((ship) => ship.isSunk())) return 'human';
-    return false;
-  };
 
   // Place five ships randomly on computer's board
   for (let i = 2; i <= 6; i++) {
@@ -33,19 +26,50 @@ const Gameplay = () => {
     } else i--;
   }
 
-  // Have human player place 5 ships on board
+  dom.renderBoard(human);
+
+  // TEMPORARY - Place five ships randomly on computer's board
+  for (let i = 2; i <= 6; i++) {
+    const row = Math.floor(Math.random() * 10);
+    const col = Math.floor(Math.random() * 10);
+    const rotation = Math.random() >= 0.5 ? 'vertical' : 'horizontal';
+
+    const ship = Ship(row, col, rotation, i);
+
+    if (human.gameboard.isPlacementValid(ship)) {
+      human.gameboard.placeShip(ship);
+      dom.updateBoard(human);
+    } else i--;
+  }
+
+  // Human player place 5 ships on board
   //   for (let i = 2; i <= 6; i++) {
-  //     human.gameboard.placeShip(/* enter stuff here */);
+  //     const spot = dom.getSpotInfo(dom.pickedSpot);
+  //     const ship = Ship(spot.row, spot.col, 'vertical', i);
+  //     if (human.gameboard.isPlacementValid(ship)) {
+  //       human.gameboard.placeShip(ship);
+  //     } else i--;
   //   }
 
-  // Game loop of players taking shots until game is over
-  //   while (!gameOver()) {
-  //     human.takeShot(/* enter stuff here */);
-  //     computer.gameboard.recieveAttack(/* enter stuff here */);
+  dom.renderBoard(computer);
 
-//     setTimeout(computer.takeShot(/* enter stuff here */), 4000);
-//     human.gameboard.recieveAttack(/* enter stuff here */);
-//   }
+  //   Game loop of players taking shots until game is over
+  let attackingPlayer = human;
+  while (!attackingPlayer.gameboard.gameOver()) {
+    let recievingPlayer = attackingPlayer.isHuman ? computer : human;
+
+    let row = Math.floor(Math.random() * 10);
+    let col = Math.floor(Math.random() * 10);
+    let location = [row, col];
+
+    attackingPlayer.takeShot(location);
+    recievingPlayer.gameboard.recieveAttack(location);
+    setTimeout(() => {
+      dom.updateBoard(recievingPlayer);
+    }, 250);
+
+    attackingPlayer = attackingPlayer.isHuman ? computer : human;
+  }
 };
 
 export default Gameplay;

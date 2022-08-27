@@ -42,17 +42,19 @@ const Gameboard = () => {
   // Sets attack location's isHit property to true
   const recieveAttack = (loc) => {
     if (board[loc[0]][loc[1]].hasShip) {
-      fleet.forEach((ship, index) => {
-        if (ship.location.indexOf(loc) >= 0) {
-          fleet[index].hit(loc);
+      fleet.forEach((ship, shipInd) => {
+        if (ship.location.findIndex((x) => x.includes(loc))) {
+          fleet[shipInd].hit(loc);
         }
       });
     }
     board[loc[0]][loc[1]].isHit = true;
   };
 
+  const gameOver = () => fleet.every((ship) => ship.isSunk());
+
   return {
-    board, isPlacementValid, placeShip, recieveAttack, fleet,
+    board, isPlacementValid, placeShip, recieveAttack, gameOver, fleet,
   };
 };
 

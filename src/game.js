@@ -1,9 +1,10 @@
+/* eslint-disable max-len */
+/* eslint-disable no-console */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-unused-expressions */
 
 import Player from './player';
-import Ship from './ship';
 
 const Game = () => {
   const computerBoard = document.querySelector('.computer-board');
@@ -17,7 +18,12 @@ const Game = () => {
   let currentShipLength = 2;
   let currentShipOrien = 'vertical';
 
-  const timeline = () => (currentShipLength <= 5 ? 'setup' : 'game');
+  const timeline = () => {
+    if (currentShipLength <= 5) return 'setup';
+    if (human.gameboard.gameOver() || computer.gameboard.gameOver()) return 'game over';
+    return 'game';
+  };
+
   const randomSpot = () => Math.floor(Math.random() * 10);
 
   const updateShipOrien = () => {
@@ -26,14 +32,17 @@ const Game = () => {
 
   const updateDisplay = () => {
     if (timeline() === 'setup') {
-      display.textContent = `Place a ${currentShipLength} length ship on your board. Toggle orientiation with Enter Key: ${currentShipOrien}`;
+      display.textContent = `Place a ${currentShipLength} length ship on your board. Toggle orientiation with 'Space' Key: ${currentShipOrien}`;
+    } else if (timeline() === 'game over') {
+      display.textContent = 'game OVERRR';
     } else if (timeline() === 'game') {
       display.textContent = 'Your turn, take a shot on the enemy board';
     }
   };
 
   document.onkeydown = (e) => {
-    if (e.key === 'Tab') {
+    if (e.key === 'Space') {
+      e.preventDefault();
       updateShipOrien();
       updateDisplay();
     }
@@ -52,35 +61,40 @@ const Game = () => {
           loc.style.pointerEvents = 'auto';
         } if (timeline() === 'game' && player.isHuman) {
           loc.style.pointerEvents = 'none';
+        } if (timeline() === 'game over') {
+          computerBoard.style.pointerEvents = 'none';
         }
 
         if (spot.hasShip && spot.isHit) {
           loc.dataset.stat = 'hit-ship';
+          loc.style.pointerEvents = 'none';
         } else if (spot.hasShip) {
           loc.dataset.stat = 'ship';
         } else if (spot.isHit) {
           loc.dataset.stat = 'hit-water';
+          loc.style.pointerEvents = 'none';
         } else loc.dataset.stat = 'water';
       });
     });
   };
 
+  // Loc click event: either valid ship placement or attack on both boards
   const gameRound = (loc) => {
     if (timeline() === 'setup') {
-      const ship = Ship(loc.dataset.row, loc.dataset.col, currentShipOrien, currentShipLength);
-      if (human.gameboard.isPlacementValid(ship)) {
-        human.gameboard.placeShip(ship);
+      if (human.gameboard.isPlacementValid(loc.dataset.row, loc.dataset.col, currentShipOrien, currentShipLength)) {
+        human.gameboard.placeShip(loc.dataset.row, loc.dataset.col, currentShipOrien, currentShipLength);
         currentShipLength++;
         updateBoard(human);
         updateBoard(computer);
-        updateDisplay();
       }
     } else if (timeline() === 'game') {
-      computer.gameboard.recieveAttack([loc.dataset.row, loc.dataset.col]);
+      computer.gameboard.recieveAttack([parseInt(loc.dataset.row, 10), parseInt(loc.dataset.col, 10)]);
       updateBoard(computer);
 
       human.gameboard.recieveAttack([randomSpot(), randomSpot()]);
-      setTimeout(updateBoard(human), 1000);
+      updateBoard(human);
+    } else if (timeline() === 'game over') {
+      updateDisplay();
     }
   };
 
@@ -107,6 +121,7 @@ const Game = () => {
 
         loc.onclick = () => {
           gameRound(loc);
+          updateDisplay();
         };
 
         domRow.appendChild(loc);
@@ -127,10 +142,8 @@ const Game = () => {
     const col = randomSpot();
     const rotation = Math.random() >= 0.5 ? 'vertical' : 'horizontal';
 
-    const ship = Ship(row, col, rotation, i);
-
-    if (computer.gameboard.isPlacementValid(ship)) {
-      computer.gameboard.placeShip(ship);
+    if (computer.gameboard.isPlacementValid(row, col, rotation, i)) {
+      computer.gameboard.placeShip(row, col, rotation, i);
       updateBoard(computer);
     } else i--;
   }
